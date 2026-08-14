@@ -35,6 +35,8 @@ RUN composer install \
 
 COPY . .
 
+RUN touch .env
+
 RUN composer dump-autoload --optimize \
     && mkdir -p var/cache var/log public/uploads \
     && chown -R www-data:www-data var public/uploads
