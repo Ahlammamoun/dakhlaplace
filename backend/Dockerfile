@@ -27,9 +27,11 @@ WORKDIR /var/www/backend
 COPY composer.json composer.lock symfony.lock ./
 
 RUN composer install \
+    --no-dev \
     --no-interaction \
     --prefer-dist \
-    --no-scripts
+    --no-scripts \
+    --optimize-autoloader
 
 COPY . .
 
