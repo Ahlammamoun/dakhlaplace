@@ -38,6 +38,7 @@ jobs:
 
             APP_DIR="/var/www/dakhla"
             REPO="git@github.com:Ahlammamoun/dakhlaplace.git"
+            COMPOSE="docker compose --env-file .env.prod -f docker-compose.prod.yml"
 
             echo "======================================"
             echo "Deploying DakhlaPlace"
@@ -45,8 +46,6 @@ jobs:
 
             if [ ! -d "$APP_DIR/.git" ]; then
               echo "First deployment - cloning repository"
-
-              mkdir -p "$APP_DIR"
 
               git clone \
                 --branch prod \
@@ -64,33 +63,25 @@ jobs:
             git reset --hard origin/prod
 
             echo "Building containers"
-            docker compose build --pull
+            $COMPOSE build --pull
 
             echo "Starting containers"
-            docker compose up -d --remove-orphans
-
-            echo "Installing Symfony production dependencies"
-            docker compose exec -T backend \
-              composer install \
-              --no-dev \
-              --prefer-dist \
-              --no-interaction \
-              --optimize-autoloader
+            $COMPOSE up -d --remove-orphans
 
             echo "Running migrations"
-            docker compose exec -T backend \
+            $COMPOSE exec -T backend \
               php bin/console doctrine:migrations:migrate \
               --no-interaction \
               --allow-no-migration \
               --env=prod
 
             echo "Clearing Symfony cache"
-            docker compose exec -T backend \
+            $COMPOSE exec -T backend \
               php bin/console cache:clear \
               --env=prod
 
             echo "Container status"
-            docker compose ps
+            $COMPOSE ps
 
             echo "======================================"
             echo "DakhlaPlace deployment completed"
