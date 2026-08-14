@@ -38,7 +38,7 @@ jobs:
 
             APP_DIR="/var/www/dakhla"
             REPO="git@github.com:Ahlammamoun/dakhlaplace.git"
-            COMPOSE="docker compose --env-file .env.prod -f docker-compose.prod.yml"
+            COMPOSE="docker-compose --env-file .env.prod -f docker-compose.prod.yml"
 
             echo "======================================"
             echo "Deploying DakhlaPlace"
