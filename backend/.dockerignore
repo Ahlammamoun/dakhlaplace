@@ -1,0 +1,7 @@
+.git
+.env.local
+var/cache
+var/log
+vendor
+public/uploads
+Dockerfile

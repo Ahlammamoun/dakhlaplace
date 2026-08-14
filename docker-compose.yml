@@ -1,0 +1,87 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: dakhla_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dakhla
+      MYSQL_USER: dakhla
+      MYSQL_PASSWORD: dakhla_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - dakhla_db_data:/var/lib/mysql
+    networks:
+      - dakhla_network
+
+  backend:
+    build:
+      context: ./backend
+    container_name: dakhla_backend
+    restart: unless-stopped
+    working_dir: /var/www/backend
+    environment:
+      APP_ENV: dev
+      APP_SECRET: change-this-secret
+      DATABASE_URL: >-
+        mysql://dakhla:dakhla_password@db:3306/dakhla?serverVersion=8.4.0&charset=utf8mb4
+    volumes:
+      - ./backend:/var/www/backend
+    depends_on:
+      - db
+    networks:
+      - dakhla_network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: dakhla_frontend
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "5174:5173"
+    volumes:
+      - ./frontend:/app
+      - dakhla_node_modules:/app/node_modules
+    networks:
+      - dakhla_network
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dakhla_nginx
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./backend:/var/www/backend:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - dakhla_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: dakhla_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8083:80"
+    depends_on:
+      - db
+    networks:
+      - dakhla_network
+
+volumes:
+  dakhla_db_data:
+  dakhla_node_modules:
+
+networks:
+  dakhla_network:
+    driver: bridge

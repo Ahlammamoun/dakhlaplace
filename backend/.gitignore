@@ -1,0 +1,13 @@
+.env
+.env.local
+.env.prod.local
+vendor/
+node_modules/
+
+# Symfony runtime
+var/
+
+# On conserve les uploads de contenu dans Git
+!public/uploads/
+!public/uploads/content/
+!public/uploads/content/**

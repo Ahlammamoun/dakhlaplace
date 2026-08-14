@@ -1,0 +1,36 @@
+# ENV / SECRETS
+.env
+.env.local
+.env.*.local
+
+backend/.env.local
+backend/.env.prod.local
+backend/.env.test.local
+
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# DEPENDENCIES
+backend/vendor/
+frontend/node_modules/
+
+# SYMFONY
+backend/var/
+backend/.phpunit.result.cache
+
+# FRONTEND BUILD
+frontend/dist/
+
+# IDE / SYSTEM
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# LOGS
+*.log
+
+# TEMP
+*.tmp
+*.swp

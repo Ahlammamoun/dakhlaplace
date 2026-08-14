@@ -1,0 +1,128 @@
+.admin-message-unread {
+  background: #f1fbfa;
+}
+
+.admin-message-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 25px;
+  display: grid;
+  place-items: center;
+}
+
+.admin-message-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: rgba(3, 29, 34, 0.68);
+  cursor: pointer;
+}
+
+.admin-message-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(680px, 100%);
+  max-height: calc(100vh - 50px);
+  border-radius: 22px;
+  overflow-y: auto;
+  background: white;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+.admin-message-dialog > header {
+  padding: 25px 27px;
+  border-bottom: 1px solid #e5eeee;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-message-dialog header span {
+  color: #e07843;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.admin-message-dialog header h2 {
+  margin: 7px 0 0;
+  color: #073f49;
+}
+
+.admin-message-dialog header button {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 auto;
+  border: 1px solid #dce7e8;
+  border-radius: 10px;
+  background: white;
+  color: #477078;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.admin-message-sender {
+  padding: 20px 27px;
+  border-bottom: 1px solid #edf2f2;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-message-sender strong,
+.admin-message-sender a {
+  display: block;
+}
+
+.admin-message-sender strong {
+  color: #173f46;
+}
+
+.admin-message-sender a {
+  margin-top: 4px;
+  color: #0a8991;
+  text-decoration: none;
+}
+
+.admin-message-sender time {
+  color: #789094;
+  font-size: 13px;
+}
+
+.admin-message-body {
+  padding: 30px 27px;
+  color: #46666c;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.admin-message-dialog > footer {
+  padding: 20px 27px;
+  border-top: 1px solid #e5eeee;
+}
+
+.admin-message-dialog > footer a {
+  padding: 12px 16px;
+  border-radius: 11px;
+  color: white;
+  background: #0a8991;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .admin-message-modal {
+    padding: 12px;
+  }
+
+  .admin-message-sender {
+    flex-direction: column;
+  }
+}
