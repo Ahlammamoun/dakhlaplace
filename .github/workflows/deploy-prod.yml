@@ -28,7 +28,7 @@ jobs:
 
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
-      - name: Deploy DakhlaPlace
+            - name: Deploy DakhlaPlace
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -36,28 +36,42 @@ jobs:
           ssh "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
 
+            APP_DIR="/var/www/dakhla"
+            REPO="git@github.com:Ahlammamoun/dakhlaplace.git"
+
             echo "======================================"
             echo "Deploying DakhlaPlace"
             echo "======================================"
 
-            cd /var/www/dakhla
+            # Premier déploiement
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "First deployment - cloning repository"
 
-            echo "1. Fetch Git repository"
-            git fetch origin
+              mkdir -p "$APP_DIR"
 
-            echo "2. Checkout production branch"
+              git clone \
+                --branch prod \
+                --single-branch \
+                "$REPO" \
+                "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+
+            # Déploiements suivants
+            echo "Updating production branch"
+
+            git fetch origin prod
             git checkout prod
-
-            echo "3. Update production code"
             git reset --hard origin/prod
 
-            echo "4. Build Docker containers"
+            echo "Building containers"
             docker compose build --pull
 
-            echo "5. Start containers"
+            echo "Starting containers"
             docker compose up -d --remove-orphans
 
-            echo "6. Install Symfony dependencies"
+            echo "Installing Symfony production dependencies"
             docker compose exec -T backend \
               composer install \
               --no-dev \
@@ -65,22 +79,19 @@ jobs:
               --no-interaction \
               --optimize-autoloader
 
-            echo "7. Run database migrations"
+            echo "Running migrations"
             docker compose exec -T backend \
               php bin/console doctrine:migrations:migrate \
               --no-interaction \
               --allow-no-migration \
               --env=prod
 
-            echo "8. Clear Symfony cache"
+            echo "Clearing Symfony cache"
             docker compose exec -T backend \
               php bin/console cache:clear \
               --env=prod
 
-            echo "9. Restart containers"
-            docker compose up -d
-
-            echo "10. Containers status"
+            echo "Container status"
             docker compose ps
 
             echo "======================================"
