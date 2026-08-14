@@ -44,17 +44,19 @@ jobs:
             echo "Deploying DakhlaPlace"
             echo "======================================"
 
-            if [ ! -d "$APP_DIR/.git" ]; then
-              echo "First deployment - cloning repository"
+          if [ ! -d "$APP_DIR/.git" ]; then
+          echo "First deployment - initializing repository"
 
-              git clone \
-                --branch prod \
-                --single-branch \
-                "$REPO" \
-                "$APP_DIR"
-            fi
+          mkdir -p "$APP_DIR"
+          cd "$APP_DIR"
 
+          git init
+          git remote add origin "$REPO"
+          git fetch origin prod
+          git checkout -B prod origin/prod
+          else
             cd "$APP_DIR"
+          fi
 
             echo "Updating production branch"
 
