@@ -3275,7 +3275,28 @@ display: inline-flex;
     0 0 8px rgba(255, 255, 255, 0.9);
   white-space: nowrap;
 }
+.mobile-explore-link {
+  display: none;
+}
 
+@media (max-width: 768px) {
+  .header-button {
+    display: none;
+  }
+
+  .mobile-explore-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: #0f5f74;
+    color: white !important;
+    font-weight: 700;
+  }
+}
 @media (max-width: 768px) {
   .interactive-map-heading {
     padding: 125px 6% 35px;

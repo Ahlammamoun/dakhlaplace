@@ -14,6 +14,7 @@ import {
 import BackToTopButton from "../components/BackToTopButton";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import Seo from "../components/Seo";
 
 import { getPublicContent } from "../services/api";
 
@@ -77,41 +78,59 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <main className="article-not-found">
-        <Header solid />
+      <>
+        <Seo
+          title="Chargement de l’article"
+          description="Article du magazine DakhlaPlace."
+          path={`/magazine/${slug}`}
+          noIndex
+        />
 
-        <div>
-          <span className="section-label">
-            Le magazine
-          </span>
+        <main className="article-not-found">
+          <Header solid />
 
-          <h1>Chargement de l’article…</h1>
-        </div>
-      </main>
+          <div>
+            <span className="section-label">
+              Le magazine
+            </span>
+
+            <h1>Chargement de l’article…</h1>
+          </div>
+        </main>
+      </>
     );
   }
 
   if (error || !article) {
     return (
-      <main className="article-not-found">
-        <Header solid />
+      <>
+        <Seo
+          title="Article introuvable"
+          description="Cet article DakhlaPlace n’est pas disponible."
+          path={`/magazine/${slug}`}
+          noIndex
+        />
 
-        <div>
-          <span className="section-label">
-            Article introuvable
-          </span>
+        <main className="article-not-found">
+          <Header solid />
 
-          <h1>
-            {error ||
-              "Cette histoire n’existe pas encore."}
-          </h1>
+          <div>
+            <span className="section-label">
+              Article introuvable
+            </span>
 
-          <Link to="/magazine">
-            <ArrowLeft size={18} />
-            Retour au magazine
-          </Link>
-        </div>
-      </main>
+            <h1>
+              {error ||
+                "Cette histoire n’existe pas encore."}
+            </h1>
+
+            <Link to="/magazine">
+              <ArrowLeft size={18} />
+              Retour au magazine
+            </Link>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -119,73 +138,127 @@ export default function ArticlePage() {
   const readingTime = getReadingTime(article.content);
   const paragraphs = getParagraphs(article.content);
 
+  const articleUrl = `https://dakhlaplace.com/magazine/${article.slug}`;
+
+  const description =
+    article.excerpt ??
+    article.subtitle ??
+    `Découvrez cet article consacré à Dakhla sur DakhlaPlace.`;
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "DakhlaPlace",
+      url: "https://dakhlaplace.com/",
+    },
+    about: {
+      "@type": "Place",
+      name: "Dakhla",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "MA",
+      },
+    },
+  };
+
+  if (image?.url) {
+    structuredData.image = image.url;
+  }
+
+  if (article.publishedAt) {
+    structuredData.datePublished = article.publishedAt;
+  }
+
+  if (article.updatedAt) {
+    structuredData.dateModified = article.updatedAt;
+  }
+
   return (
-    <main className="article-page">
-      <Header solid />
+    <>
+      <Seo
+        title={article.title}
+        description={description}
+        path={`/magazine/${article.slug}`}
+        image={image?.url}
+        type="article"
+        structuredData={structuredData}
+      />
 
-      <article>
-        <header className="article-page-header">
-          <Link
-            to="/magazine"
-            className="article-back-link"
-          >
-            <ArrowLeft size={18} />
-            Retour au magazine
-          </Link>
+      <main className="article-page">
+        <Header solid />
 
-          <span className="section-label">
-            {article.subtitle ?? "Découverte"}
-          </span>
+        <article>
+          <header className="article-page-header">
+            <Link
+              to="/magazine"
+              className="article-back-link"
+            >
+              <ArrowLeft size={18} />
+              Retour au magazine
+            </Link>
 
-          <h1>{article.title}</h1>
+            <span className="section-label">
+              {article.subtitle ?? "Découverte"}
+            </span>
 
-          {article.excerpt && (
-            <p>{article.excerpt}</p>
-          )}
+            <h1>{article.title}</h1>
 
-          <div className="article-page-reading-time">
-            <Clock size={16} />
-            {readingTime} min de lecture
-          </div>
-        </header>
+            {article.excerpt && (
+              <p>{article.excerpt}</p>
+            )}
 
-        {image && (
-          <div className="article-page-cover">
-            <img
-              src={image.url}
-              alt={
-                image.altText ??
-                article.title
-              }
-            />
-          </div>
-        )}
+            <div className="article-page-reading-time">
+              <Clock size={16} />
+              {readingTime} min de lecture
+            </div>
+          </header>
 
-        <div className="article-page-body">
-          {paragraphs.length > 0 ? (
-            paragraphs.map((paragraph, index) => (
-              <p
-                className={
-                  index === 0
-                    ? "article-lead"
-                    : undefined
+          {image && (
+            <div className="article-page-cover">
+              <img
+                src={image.url}
+                alt={
+                  image.altText ??
+                  article.title
                 }
-                key={`${article.id}-${index}`}
-              >
-                {paragraph}
-              </p>
-            ))
-          ) : (
-            <p className="article-lead">
-              Le contenu de cet article sera bientôt
-              disponible.
-            </p>
+              />
+            </div>
           )}
-        </div>
-      </article>
 
-      <Footer />
-      <BackToTopButton />
-    </main>
+          <div className="article-page-body">
+            {paragraphs.length > 0 ? (
+              paragraphs.map((paragraph, index) => (
+                <p
+                  className={
+                    index === 0
+                      ? "article-lead"
+                      : undefined
+                  }
+                  key={`${article.id}-${index}`}
+                >
+                  {paragraph}
+                </p>
+              ))
+            ) : (
+              <p className="article-lead">
+                Le contenu de cet article sera bientôt
+                disponible.
+              </p>
+            )}
+          </div>
+        </article>
+
+        <Footer />
+        <BackToTopButton />
+      </main>
+    </>
   );
 }

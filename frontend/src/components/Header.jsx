@@ -2,17 +2,18 @@ import {
   useEffect,
   useState,
 } from "react";
+
 import {
   Menu,
   X,
 } from "lucide-react";
 
-import logoSymbol from "../assets/dakhla-place-symbol.png";
 import { Link } from "react-router-dom";
+
+import logoSymbol from "../assets/dakhla-place-symbol.png";
 
 export default function Header({ solid = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -34,10 +35,11 @@ export default function Header({ solid = false }) {
 
   return (
     <header
-      className={`header ${isScrolled || solid ? "header-scrolled" : ""
-        }`}
+      className={`header ${
+        isScrolled || solid ? "header-scrolled" : ""
+      }`}
     >
-      <Link to="/" className="logo">
+      <Link to="/" className="logo" onClick={closeMenu}>
         <img
           src={logoSymbol}
           alt=""
@@ -51,44 +53,79 @@ export default function Header({ solid = false }) {
       </Link>
 
       <nav
-        className={`navigation ${menuOpen ? "navigation-open" : ""
-          }`}
+        className={`navigation ${
+          menuOpen ? "navigation-open" : ""
+        }`}
       >
-        <a href="/decouvrir-dakhla" onClick={closeMenu}>
+        <Link
+          to="/decouvrir-dakhla"
+          onClick={closeMenu}
+        >
           Découvrir
-        </a>
+        </Link>
 
-        <a href="/activites" onClick={closeMenu}>
+        <Link
+          to="/activites"
+          onClick={closeMenu}
+        >
           Activités
-        </a>
+        </Link>
 
-        <a href="/hebergements" onClick={closeMenu}>
+        <Link
+          to="/hebergements"
+          onClick={closeMenu}
+        >
           Séjourner
-        </a>
+        </Link>
 
-        <a href="/restaurants" onClick={closeMenu}>
+        <Link
+          to="/restaurants"
+          onClick={closeMenu}
+        >
           Restaurants
-        </a>
+        </Link>
 
-        <a href="/magazine" onClick={closeMenu}>
+        <Link
+          to="/magazine"
+          onClick={closeMenu}
+        >
           Le magazine
-        </a>
+        </Link>
+
+        <Link
+          to="/carte-dakhla"
+          className="mobile-explore-link"
+          onClick={closeMenu}
+        >
+          Explorer Dakhla
+        </Link>
       </nav>
 
-      <a href="/carte-dakhla" className="header-button">
+      <Link
+        to="/carte-dakhla"
+        className="header-button"
+      >
         Explorer Dakhla
-      </a>
+      </Link>
 
       <button
         type="button"
         className="menu-button"
         aria-label={
-          menuOpen ? "Fermer le menu" : "Ouvrir le menu"
+          menuOpen
+            ? "Fermer le menu"
+            : "Ouvrir le menu"
         }
         aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((isOpen) => !isOpen)}
+        onClick={() =>
+          setMenuOpen((isOpen) => !isOpen)
+        }
       >
-        {menuOpen ? <X size={27} /> : <Menu size={27} />}
+        {menuOpen ? (
+          <X size={27} />
+        ) : (
+          <Menu size={27} />
+        )}
       </button>
     </header>
   );

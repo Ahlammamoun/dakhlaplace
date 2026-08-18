@@ -13,6 +13,7 @@ import {
 import BackToTopButton from "../components/BackToTopButton";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import Seo from "../components/Seo";
 import { getPublicContents } from "../services/api";
 
 import accommodationImage from "../assets/hebergement-dakhla.jpg";
@@ -58,8 +59,7 @@ function getMainImage(item) {
 }
 
 export default function AccommodationsPage() {
-  const [accommodations, setAccommodations] =
-    useState([]);
+  const [accommodations, setAccommodations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -74,7 +74,7 @@ export default function AccommodationsPage() {
       } catch (requestError) {
         setError(
           requestError.message ??
-          "Impossible de charger les hébergements."
+            "Impossible de charger les hébergements."
         );
       } finally {
         setLoading(false);
@@ -86,9 +86,7 @@ export default function AccommodationsPage() {
 
   const featuredAccommodation = useMemo(
     () =>
-      accommodations.find(
-        (item) => item.isFeatured
-      ) ??
+      accommodations.find((item) => item.isFeatured) ??
       accommodations[0] ??
       null,
     [accommodations]
@@ -99,245 +97,275 @@ export default function AccommodationsPage() {
     : null;
 
   return (
-    <main className="inner-page">
-      <Header />
-
-      <section
-        className="inner-hero accommodation-hero"
-        style={{
-          backgroundImage: `url(${featuredImage?.url ??
-            accommodationImage
-            })`,
+    <>
+      <Seo
+        title="Hôtels et hébergements à Dakhla"
+        description="Trouvez où dormir à Dakhla au Maroc : hôtels, écolodges, surf camps, maisons d’hôtes et hébergements autour de la lagune, de la ville et du désert."
+        path="/hebergements"
+        image={featuredImage?.url ?? accommodationImage}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Hôtels et hébergements à Dakhla",
+          url: "https://dakhlaplace.com/hebergements",
+          description:
+            "Guide des hôtels, écolodges, surf camps et maisons d’hôtes à Dakhla au Maroc.",
+          isPartOf: {
+            "@type": "WebSite",
+            name: "DakhlaPlace",
+            url: "https://dakhlaplace.com/",
+          },
+          about: {
+            "@type": "Place",
+            name: "Dakhla",
+            address: {
+              "@type": "PostalAddress",
+              addressCountry: "MA",
+            },
+          },
         }}
-      >
-        <div className="inner-hero-overlay" />
+      />
 
-        <div className="inner-hero-content">
-          <span>
-            <Hotel size={17} />
-            Préparez votre séjour
-          </span>
+      <main className="inner-page">
+        <Header />
 
-          <h1>Où dormir à Dakhla&nbsp;?</h1>
+        <section
+          className="inner-hero accommodation-hero"
+          style={{
+            backgroundImage: `url(${
+              featuredImage?.url ?? accommodationImage
+            })`,
+          }}
+        >
+          <div className="inner-hero-overlay" />
+
+          <div className="inner-hero-content">
+            <span>
+              <Hotel size={17} />
+              Préparez votre séjour
+            </span>
+
+            <h1>Où dormir à Dakhla&nbsp;?</h1>
+
+            <p>
+              Hôtels, écolodges, camps et maisons
+              d’hôtes : choisissez l’hébergement qui
+              correspond à votre manière de voyager.
+            </p>
+          </div>
+        </section>
+
+        <section className="accommodation-introduction">
+          <div>
+            <span className="section-label">
+              Trouver son hébergement
+            </span>
+
+            <h2>
+              Un séjour au plus près des paysages
+            </h2>
+          </div>
 
           <p>
-            Hôtels, écolodges, camps et maisons
-            d’hôtes : choisissez l’hébergement qui
-            correspond à votre manière de voyager.
+            Que vous souhaitiez rester au cœur de la
+            ville, dormir face à la lagune ou vous
+            éloigner dans le désert, Dakhla propose
+            plusieurs styles d’hébergement.
           </p>
-        </div>
-      </section>
+        </section>
 
-      <section className="accommodation-introduction">
-        <div>
-          <span className="section-label">
-            Trouver son hébergement
-          </span>
+        <section className="accommodation-types">
+          {accommodationTypes.map((type, index) => {
+            const Icon = type.icon;
 
-          <h2>
-            Un séjour au plus près des paysages
-          </h2>
-        </div>
+            return (
+              <article
+                className="accommodation-type-card"
+                id={type.id}
+                key={type.id}
+              >
+                <div className="accommodation-type-number">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
 
-        <p>
-          Que vous souhaitiez rester au cœur de la
-          ville, dormir face à la lagune ou vous
-          éloigner dans le désert, Dakhla propose
-          plusieurs styles d’hébergement.
-        </p>
-      </section>
+                <div className="accommodation-type-icon">
+                  <Icon size={27} />
+                </div>
 
-      <section className="accommodation-types">
-        {accommodationTypes.map((type, index) => {
-          const Icon = type.icon;
+                <h2>{type.title}</h2>
+                <p>{type.description}</p>
 
-          return (
-            <article
-              className="accommodation-type-card"
-              id={type.id}
-              key={type.id}
-            >
-              <div className="accommodation-type-number">
-                {String(index + 1).padStart(2, "0")}
-              </div>
+                <a href="#accommodation-list">
+                  Voir les établissements
+                  <ArrowRight size={18} />
+                </a>
+              </article>
+            );
+          })}
+        </section>
 
-              <div className="accommodation-type-icon">
-                <Icon size={27} />
-              </div>
+        <section
+          className="public-content-section"
+          id="accommodation-list"
+        >
+          <div className="public-content-heading">
+            <span className="section-label">
+              Nos adresses
+            </span>
 
-              <h2>{type.title}</h2>
-              <p>{type.description}</p>
+            <h2>Les hébergements à Dakhla</h2>
 
-              <a href="#accommodation-list">
-                Voir les établissements
-                <ArrowRight size={18} />
-              </a>
-            </article>
-          );
-        })}
-      </section>
-
-      <section
-        className="public-content-section"
-        id="accommodation-list"
-      >
-        <div className="public-content-heading">
-          <span className="section-label">
-            Nos adresses
-          </span>
-
-          <h2>Les hébergements à Dakhla</h2>
-
-          <p>
-            Découvrez les établissements publiés et
-            actualisés depuis DakhlaPlace.
-          </p>
-        </div>
-
-        {loading && (
-          <div className="public-content-state">
-            Chargement des hébergements…
+            <p>
+              Découvrez les établissements publiés et
+              actualisés depuis DakhlaPlace.
+            </p>
           </div>
-        )}
 
-        {error && (
-          <div className="public-content-state error">
-            {error}
-          </div>
-        )}
-
-        {!loading &&
-          !error &&
-          accommodations.length === 0 && (
+          {loading && (
             <div className="public-content-state">
-              Aucun hébergement publié pour le
-              moment.
+              Chargement des hébergements…
             </div>
           )}
 
-        {!loading && accommodations.length > 0 && (
-          <div className="public-content-grid">
-            {accommodations.map((item) => {
-              const image = getMainImage(item);
+          {error && (
+            <div className="public-content-state error">
+              {error}
+            </div>
+          )}
 
-              return (
-                <article
-                  className="public-content-card"
-                  key={item.id}
-                >
-                  <div className="public-content-image">
-                    {image ? (
-                      <img
-                        src={image.url}
-                        alt={
-                          image.altText ??
-                          item.title
-                        }
-                      />
-                    ) : (
-                      <div className="public-image-empty">
-                        <Hotel size={32} />
-                      </div>
-                    )}
+          {!loading &&
+            !error &&
+            accommodations.length === 0 && (
+              <div className="public-content-state">
+                Aucun hébergement publié pour le
+                moment.
+              </div>
+            )}
 
-                    {item.isFeatured && (
-                      <span className="featured-badge">
-                        Recommandé
+          {!loading && accommodations.length > 0 && (
+            <div className="public-content-grid">
+              {accommodations.map((item) => {
+                const image = getMainImage(item);
+
+                return (
+                  <article
+                    className="public-content-card"
+                    key={item.id}
+                  >
+                    <div className="public-content-image">
+                      {image ? (
+                        <img
+                          src={image.url}
+                          alt={
+                            image.altText ??
+                            item.title
+                          }
+                        />
+                      ) : (
+                        <div className="public-image-empty">
+                          <Hotel size={32} />
+                        </div>
+                      )}
+
+                      {item.isFeatured && (
+                        <span className="featured-badge">
+                          Recommandé
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="public-content-card-body">
+                      <span className="section-label">
+                        Hébergement
                       </span>
-                    )}
-                  </div>
 
-                  <div className="public-content-card-body">
-                    <span className="section-label">
-                      Hébergement
-                    </span>
+                      <h3>{item.title}</h3>
 
-                    <h3>{item.title}</h3>
+                      {item.subtitle && (
+                        <strong>
+                          {item.subtitle}
+                        </strong>
+                      )}
 
-                    {item.subtitle && (
-                      <strong>
-                        {item.subtitle}
-                      </strong>
-                    )}
+                      {item.excerpt && (
+                        <p>{item.excerpt}</p>
+                      )}
 
-                    {item.excerpt && (
-                      <p>{item.excerpt}</p>
-                    )}
+                      {item.address && (
+                        <div className="public-content-address">
+                          <MapPin size={16} />
+                          {item.address}
+                        </div>
+                      )}
 
-                    {item.address && (
-                      <div className="public-content-address">
-                        <MapPin size={16} />
-                        {item.address}
-                      </div>
-                    )}
+                      {(item.phone || item.websiteUrl) && (
+                        <div className="public-content-actions">
+                          {item.phone && (
+                            <a href={`tel:${item.phone}`}>
+                              <Phone size={17} />
+                              {item.phone}
+                            </a>
+                          )}
 
-                    {(item.phone || item.websiteUrl) && (
-                      <div className="public-content-actions">
-                        {item.phone && (
-                          <a href={`tel:${item.phone}`}>
-                            <Phone size={17} />
-                            {item.phone}
-                          </a>
-                        )}
+                          {item.websiteUrl && (
+                            <a
+                              href={item.websiteUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Visiter le site
+                              <ExternalLink size={17} />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-                        {item.websiteUrl && (
-                          <a
-                            href={item.websiteUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Visiter le site
-                            <ExternalLink size={17} />
-                          </a>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
+        <section className="accommodation-highlight">
+          <div className="accommodation-highlight-image">
+            <img
+              src={lagoonImage}
+              alt="Lagune de Dakhla au Maroc"
+            />
           </div>
-        )}
-      </section>
 
-      <section className="accommodation-highlight">
-        <div className="accommodation-highlight-image">
-          <img
-            src={lagoonImage}
-            alt="Lagune de Dakhla"
-          />
-        </div>
+          <div className="accommodation-highlight-content">
+            <span className="section-label">
+              Bien choisir son séjour
+            </span>
 
-        <div className="accommodation-highlight-content">
-          <span className="section-label">
-            Bien choisir son séjour
-          </span>
+            <h2>Ville, lagune ou désert ?</h2>
 
-          <h2>Ville, lagune ou désert ?</h2>
+            <p>
+              Le centre-ville permet de rester proche
+              des commerces et des restaurants. Les
+              hébergements autour de la lagune
+              privilégient la nature et les activités
+              nautiques.
+            </p>
 
-          <p>
-            Le centre-ville permet de rester proche
-            des commerces et des restaurants. Les
-            hébergements autour de la lagune
-            privilégient la nature et les activités
-            nautiques.
-          </p>
+            <p>
+              Les camps plus éloignés offrent une
+              expérience plus calme, au cœur des grands
+              espaces.
+            </p>
 
-          <p>
-            Les camps plus éloignés offrent une
-            expérience plus calme, au cœur des grands
-            espaces.
-          </p>
+            <a href="#accommodation-list">
+              Voir les hébergements
+              <ArrowRight size={19} />
+            </a>
+          </div>
+        </section>
 
-          <a href="#accommodation-list">
-            Voir les hébergements
-            <ArrowRight size={19} />
-          </a>
-        </div>
-      </section>
-
-      <Footer />
-      <BackToTopButton />
-    </main>
+        <Footer />
+        <BackToTopButton />
+      </main>
+    </>
   );
 }
