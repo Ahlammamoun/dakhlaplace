@@ -35,3 +35,4 @@ Thumbs.db
 *.tmp
 *.swp
 dakhla.sql
+backend/public/uploads/
